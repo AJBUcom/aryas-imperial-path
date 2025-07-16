@@ -1,5 +1,4 @@
 import { cn } from "@/lib/utils";
-import aryaLogo from "@/assets/arya-logo.png";
 
 interface AryaLogoProps {
   size?: "sm" | "md" | "lg" | "xl";
@@ -17,7 +16,7 @@ const AryaLogo = ({ size = "md", className, animate = false }: AryaLogoProps) =>
 
   return (
     <img
-      src={aryaLogo}
+      src="/lovable-uploads/684d2252-c5fb-41f3-8cd0-ff93ffd7c2cb.png"
       alt="Arya's Imperial Sun"
       className={cn(
         sizeClasses[size],
