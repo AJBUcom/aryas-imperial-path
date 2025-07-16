@@ -105,9 +105,9 @@ const Dashboard = () => {
           <div className="flex items-center space-x-4">
             <AryaLogo size="md" animate className="text-gold" />
             <div>
-              <h1 className="font-royal text-xl text-gold">AJBU Kingdom</h1>
+              <h1 className="font-royal text-xl text-gold">Arya Kingdom</h1>
               <p className="text-sm text-muted-foreground font-imperial">
-                Welcome back, {user?.email?.split('@')[0] || 'Your Majesty'}
+                Welcome back, {user?.email?.split('@')[0] || 'King Lawrence of Arya'}
               </p>
             </div>
           </div>
