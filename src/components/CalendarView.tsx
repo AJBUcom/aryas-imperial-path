@@ -1,111 +1,174 @@
-import { useState } from "react";
-import { Sword, Scroll, Flame } from "lucide-react";
-
-interface Quest {
-  id: string;
-  title: string;
-  type: 'main' | 'side' | 'ritual';
-  startTime: string;
-  duration: number; // in hours
-  completed: boolean;
-}
+import { useState, useRef } from "react";
+import { Clock, Sword, Scroll, Crown, Zap, Shield, Sparkles, Plus } from "lucide-react";
+import { Quest } from "@/hooks/useQuests";
 
 interface CalendarViewProps {
   quests: Quest[];
   onQuestClick: (questId: string) => void;
+  onCreateQuest: (startTime: string, endTime: string) => void;
 }
 
-const CalendarView = ({ quests, onQuestClick }: CalendarViewProps) => {
-  const hours = Array.from({ length: 24 }, (_, i) => i);
-  
+const CalendarView = ({ quests, onQuestClick, onCreateQuest }: CalendarViewProps) => {
+  const [isDragging, setIsDragging] = useState(false);
+  const [dragStart, setDragStart] = useState<number | null>(null);
+  const [dragEnd, setDragEnd] = useState<number | null>(null);
+  const calendarRef = useRef<HTMLDivElement>(null);
+
   const formatTime = (hour: number) => {
     const period = hour >= 12 ? 'PM' : 'AM';
     const displayHour = hour === 0 ? 12 : hour > 12 ? hour - 12 : hour;
     return `${displayHour}:00 ${period}`;
   };
 
-  const getQuestIcon = (type: Quest['type']) => {
-    switch (type) {
-      case 'main': return <Sword className="w-3 h-3" />;
-      case 'side': return <Scroll className="w-3 h-3" />;
-      case 'ritual': return <Flame className="w-3 h-3" />;
+  const getQuestIcon = (iconName: string) => {
+    switch (iconName) {
+      case 'sword':
+        return <Sword className="w-4 h-4" />;
+      case 'scroll':
+        return <Scroll className="w-4 h-4" />;
+      case 'crown':
+        return <Crown className="w-4 h-4" />;
+      case 'zap':
+        return <Zap className="w-4 h-4" />;
+      case 'shield':
+        return <Shield className="w-4 h-4" />;
+      case 'sparkles':
+        return <Sparkles className="w-4 h-4" />;
+      default:
+        return <Clock className="w-4 h-4" />;
+    }
+  };
+
+  const getCategoryColor = (category: Quest['category']) => {
+    switch (category) {
+      case 'Main Quest':
+        return 'bg-quest-main/20 border-quest-main text-quest-main';
+      case 'Side Quest':
+        return 'bg-quest-side/20 border-quest-side text-quest-side';
+      case 'Royal Ritual':
+        return 'bg-quest-ritual/20 border-quest-ritual text-quest-ritual';
+      default:
+        return 'bg-quest-main/20 border-quest-main text-quest-main';
     }
   };
 
   const getQuestForHour = (hour: number) => {
     return quests.find(quest => {
-      const questHour = parseInt(quest.startTime.split(':')[0]);
-      return questHour <= hour && hour < questHour + quest.duration;
+      const startDate = new Date(quest.start_time);
+      const endDate = new Date(quest.end_time);
+      const startHour = startDate.getHours();
+      const endHour = endDate.getHours();
+      return hour >= startHour && hour < endHour;
     });
   };
 
-  const getQuestPosition = (quest: Quest, hour: number) => {
-    const questHour = parseInt(quest.startTime.split(':')[0]);
-    const questMinutes = parseInt(quest.startTime.split(':')[1]);
+  const handleMouseDown = (hour: number, e: React.MouseEvent) => {
+    if (getQuestForHour(hour)) return; // Don't start drag on existing quest
     
-    if (hour === questHour) {
-      const heightPercentage = (quest.duration * 100);
-      const topOffset = (questMinutes / 60) * 100;
-      
-      return {
-        top: `${topOffset}%`,
-        height: `${Math.min(heightPercentage, (100 - topOffset))}%`
-      };
+    setIsDragging(true);
+    setDragStart(hour);
+    setDragEnd(hour);
+    e.preventDefault();
+  };
+
+  const handleMouseEnter = (hour: number) => {
+    if (isDragging && dragStart !== null) {
+      setDragEnd(hour);
     }
-    return null;
+  };
+
+  const handleMouseUp = () => {
+    if (isDragging && dragStart !== null && dragEnd !== null) {
+      const startHour = Math.min(dragStart, dragEnd);
+      const endHour = Math.max(dragStart, dragEnd) + 1;
+      
+      const startTime = `${startHour.toString().padStart(2, '0')}:00`;
+      const endTime = `${endHour.toString().padStart(2, '0')}:00`;
+      
+      onCreateQuest(startTime, endTime);
+    }
+    
+    setIsDragging(false);
+    setDragStart(null);
+    setDragEnd(null);
+  };
+
+  const isInDragRange = (hour: number) => {
+    if (!isDragging || dragStart === null || dragEnd === null) return false;
+    const start = Math.min(dragStart, dragEnd);
+    const end = Math.max(dragStart, dragEnd);
+    return hour >= start && hour <= end;
   };
 
   return (
-    <div className="calendar-grid flex-1">
-      {/* Header */}
-      <div className="calendar-header">
-        <div className="flex">
-          <div className="calendar-time-column text-center">Time</div>
-          <div className="flex-1 text-center">Today's Quests</div>
+    <div 
+      className="panel-quest p-6 space-y-4"
+      ref={calendarRef}
+      onMouseUp={handleMouseUp}
+      onMouseLeave={handleMouseUp}
+    >
+      <h2 className="font-royal text-xl text-gold flex items-center space-x-2">
+        <Clock className="w-5 h-5" />
+        <span>Today's Royal Schedule</span>
+        <div className="text-xs text-muted-foreground font-imperial ml-auto">
+          Click and drag to create quests
         </div>
-      </div>
-
-      {/* Calendar Body */}
-      <div className="flex">
-        {/* Time Column */}
-        <div className="calendar-time-column">
-          {hours.map((hour) => (
-            <div key={hour} className="calendar-time-slot">
-              {formatTime(hour)}
-            </div>
-          ))}
-        </div>
-
-        {/* Events Column */}
-        <div className="calendar-event-area">
-          {hours.map((hour) => {
-            const quest = getQuestForHour(hour);
-            const isQuestStart = quest && parseInt(quest.startTime.split(':')[0]) === hour;
-            
-            return (
-              <div key={hour} className="calendar-hour-row">
-                {isQuestStart && (
-                  <div 
-                    className={`quest-block quest-${quest.type} ${quest.completed ? 'opacity-60' : ''}`}
-                    style={getQuestPosition(quest, hour) || {}}
-                    onClick={() => onQuestClick(quest.id)}
-                  >
-                    <div className="flex items-center space-x-2">
-                      {getQuestIcon(quest.type)}
-                      <span className="flex-1 truncate">{quest.title}</span>
-                      {quest.completed && (
-                        <span className="text-xs opacity-75">✓</span>
-                      )}
-                    </div>
-                    <div className="text-xs opacity-75 mt-1">
-                      {quest.startTime} - {quest.duration}h
-                    </div>
-                  </div>
-                )}
+      </h2>
+      
+      <div className="grid grid-cols-1 gap-1 max-h-96 overflow-y-auto">
+        {Array.from({ length: 24 }, (_, hour) => {
+          const quest = getQuestForHour(hour);
+          
+          return (
+            <div 
+              key={hour} 
+              className={`relative h-12 border-l-2 border-border/30 pl-4 flex items-center cursor-pointer transition-all ${
+                isInDragRange(hour) ? 'bg-gold/10 border-gold' : 'hover:bg-background/50'
+              }`}
+              onMouseDown={(e) => handleMouseDown(hour, e)}
+              onMouseEnter={() => handleMouseEnter(hour)}
+            >
+              <div className="absolute -left-2 w-12 text-xs text-muted-foreground font-imperial">
+                {formatTime(hour)}
               </div>
-            );
-          })}
-        </div>
+              
+              {quest ? (
+                <div 
+                  className={`w-full rounded-lg border p-2 cursor-pointer transition-all hover:scale-[1.02] ${
+                    quest.completed 
+                      ? 'bg-green-500/20 border-green-500 text-green-300' 
+                      : getCategoryColor(quest.category)
+                  }`}
+                  onClick={() => onQuestClick(quest.id)}
+                >
+                  <div className="flex items-center space-x-2">
+                    {getQuestIcon(quest.icon)}
+                    <div className="flex-1">
+                      <div className="font-royal text-sm">{quest.title}</div>
+                      <div className="text-xs opacity-75 font-imperial flex items-center space-x-2">
+                        <span>{new Date(quest.start_time).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false })}</span>
+                        <span>•</span>
+                        <span>{quest.category}</span>
+                        <span>•</span>
+                        <span>+{quest.xp} XP</span>
+                      </div>
+                    </div>
+                    {quest.completed && (
+                      <div className="text-green-400 text-xs font-bold">✓</div>
+                    )}
+                  </div>
+                </div>
+              ) : isInDragRange(hour) ? (
+                <div className="w-full rounded-lg border-2 border-dashed border-gold/50 p-2 flex items-center justify-center">
+                  <Plus className="w-4 h-4 text-gold/50" />
+                  <span className="text-xs text-gold/50 font-imperial ml-1">New Quest</span>
+                </div>
+              ) : (
+                <div className="w-full h-full" />
+              )}
+            </div>
+          );
+        })}
       </div>
     </div>
   );

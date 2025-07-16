@@ -1,5 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
+import { useQuests } from "@/hooks/useQuests";
 import { Button } from "@/components/ui/button";
 import { LogOut, Settings, Calendar, Menu, User } from "lucide-react";
 import AryaLogo from "@/components/AryaLogo";
@@ -8,74 +9,33 @@ import DNARune from "@/components/DNARune";
 import PixelCharacter from "@/components/PixelCharacter";
 import PixelOverlay from "@/components/PixelOverlay";
 import ThroneProgressMeter from "@/components/ThroneProgressMeter";
+import { QuestCreationModal } from "@/components/QuestCreationModal";
 import stonePathBg from "@/assets/stone-path-background.jpg";
-
-interface Quest {
-  id: string;
-  title: string;
-  type: 'main' | 'side' | 'ritual';
-  startTime: string;
-  duration: number;
-  completed: boolean;
-}
 
 const Dashboard = () => {
   const { user, signOut } = useAuth();
+  const { 
+    quests, 
+    loading, 
+    createQuest, 
+    toggleQuestCompletion, 
+    completedQuests, 
+    totalQuests, 
+    progressPercentage 
+  } = useQuests();
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [quests, setQuests] = useState<Quest[]>([
-    {
-      id: "1",
-      title: "Morning Kingdom Strategy",
-      type: "main",
-      startTime: "09:00",
-      duration: 2,
-      completed: false
-    },
-    {
-      id: "2", 
-      title: "Royal Training Session",
-      type: "main",
-      startTime: "14:00",
-      duration: 1,
-      completed: false
-    },
-    {
-      id: "3",
-      title: "Ancient Text Study",
-      type: "side",
-      startTime: "11:00",
-      duration: 1,
-      completed: false
-    },
-    {
-      id: "4",
-      title: "Meditation Ritual",
-      type: "ritual",
-      startTime: "07:00",
-      duration: 1,
-      completed: false
-    },
-    {
-      id: "5",
-      title: "Court Advisory Meeting",
-      type: "side",
-      startTime: "16:00",
-      duration: 2,
-      completed: false
-    }
-  ]);
-
-  const completedQuests = quests.filter(q => q.completed).length;
-  const totalQuests = quests.length;
-  const progressPercentage = totalQuests > 0 ? (completedQuests / totalQuests) * 100 : 0;
+  const [questModalOpen, setQuestModalOpen] = useState(false);
+  const [questModalTimes, setQuestModalTimes] = useState<{start: string, end: string}>({start: '', end: ''});
+  
   const isProductiveDay = completedQuests >= 3;
 
   const handleQuestClick = (questId: string) => {
-    setQuests(prev => prev.map(quest => 
-      quest.id === questId 
-        ? { ...quest, completed: !quest.completed }
-        : quest
-    ));
+    toggleQuestCompletion(questId);
+  };
+
+  const handleCreateQuest = (startTime: string, endTime: string) => {
+    setQuestModalTimes({ start: startTime, end: endTime });
+    setQuestModalOpen(true);
   };
 
   const handleSignOut = async () => {
@@ -149,7 +109,11 @@ const Dashboard = () => {
 
           {/* Calendar */}
           <div className="mb-8">
-            <CalendarView quests={quests} onQuestClick={handleQuestClick} />
+            <CalendarView 
+              quests={quests} 
+              onQuestClick={handleQuestClick}
+              onCreateQuest={handleCreateQuest}
+            />
           </div>
 
           {/* Throne Progress Meter */}
@@ -224,6 +188,15 @@ const Dashboard = () => {
           onClick={() => setSidebarOpen(false)}
         />
       )}
+
+      {/* Quest Creation Modal */}
+      <QuestCreationModal
+        open={questModalOpen}
+        onClose={() => setQuestModalOpen(false)}
+        onCreateQuest={createQuest}
+        initialStartTime={questModalTimes.start}
+        initialEndTime={questModalTimes.end}
+      />
     </div>
   );
 };
