@@ -11,7 +11,7 @@ const Index = () => {
   const handleEnterKingdom = () => {
     setIsEntering(true);
     setTimeout(() => {
-      navigate('/dashboard');
+      navigate('/auth');
     }, 1500);
   };
 
