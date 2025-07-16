@@ -5,7 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
-import { Sword, Crown, Shield } from "lucide-react";
+import { Sword, Shield } from "lucide-react";
+import AryaLogo from "@/components/AryaLogo";
 
 const Auth = () => {
   const [isSignUp, setIsSignUp] = useState(false);
@@ -120,11 +121,11 @@ const Auth = () => {
       <Card className="w-full max-w-md bg-royal-deep/80 border-royal-gold/30 backdrop-blur-sm">
         <CardHeader className="text-center space-y-4">
           <div className="flex items-center justify-center space-x-2">
-            <Crown className="h-8 w-8 text-royal-gold" />
+            <AryaLogo size="md" animate />
             <CardTitle className="text-2xl font-bold text-royal-gold">
               {isSignUp ? "Join the Kingdom" : "Enter Your Realm"}
             </CardTitle>
-            <Crown className="h-8 w-8 text-royal-gold" />
+            <AryaLogo size="md" animate />
           </div>
           <CardDescription className="text-royal-silver">
             {isSignUp 

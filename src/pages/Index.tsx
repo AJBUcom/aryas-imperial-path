@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Crown, Sun, Swords, Shield } from "lucide-react";
+import { Sun, Swords, Shield } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import AryaLogo from "@/components/AryaLogo";
 import throneHallBg from "@/assets/throne-hall-background.jpg";
 
 const Index = () => {
@@ -46,7 +47,7 @@ const Index = () => {
         {/* Header */}
         <header className="flex items-center justify-between p-6 lg:p-8">
           <div className="flex items-center space-x-3">
-            <Crown className="w-8 h-8 text-gold" />
+            <AryaLogo size="md" animate className="text-gold" />
             <span className="font-royal text-2xl text-gold text-shadow-gold">AJBU</span>
           </div>
           
@@ -71,12 +72,7 @@ const Index = () => {
           <div className="text-center max-w-4xl mx-auto">
             {/* Royal Ornament */}
             <div className="mb-8 flex justify-center">
-              <div className="relative">
-                <Sun className="w-16 h-16 text-gold animate-glow" />
-                <div className="absolute inset-0 w-16 h-16 text-gold animate-float">
-                  <Crown className="w-6 h-6 absolute top-1 left-1/2 transform -translate-x-1/2" />
-                </div>
-              </div>
+              <AryaLogo size="xl" animate className="text-gold" />
             </div>
 
             {/* Hero Title */}
@@ -109,9 +105,9 @@ const Index = () => {
                   </span>
                 ) : (
                   <span className="flex items-center space-x-3">
-                    <Crown className="w-6 h-6" />
+                    <AryaLogo size="sm" />
                     <span>Enter Your Kingdom</span>
-                    <Crown className="w-6 h-6" />
+                    <AryaLogo size="sm" />
                   </span>
                 )}
               </Button>
@@ -134,7 +130,7 @@ const Index = () => {
           <div className="text-center">
             <div className="flex justify-center items-center space-x-4 mb-4">
               <div className="h-px bg-gradient-to-r from-transparent via-gold to-transparent flex-1" />
-              <Sun className="w-6 h-6 text-gold" />
+              <AryaLogo size="sm" animate className="text-gold" />
               <div className="h-px bg-gradient-to-r from-transparent via-gold to-transparent flex-1" />
             </div>
             <p className="font-imperial text-sm text-muted-foreground">

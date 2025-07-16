@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
-import { Crown, LogOut, Settings, Calendar, Menu, User } from "lucide-react";
+import { LogOut, Settings, Calendar, Menu, User } from "lucide-react";
+import AryaLogo from "@/components/AryaLogo";
 import CalendarView from "@/components/CalendarView";
 import DNARune from "@/components/DNARune";
 import PixelCharacter from "@/components/PixelCharacter";
@@ -102,7 +103,7 @@ const Dashboard = () => {
       <header className="relative z-20 bg-card/80 backdrop-blur-sm border-b border-border/50">
         <div className="flex items-center justify-between p-4">
           <div className="flex items-center space-x-4">
-            <Crown className="w-8 h-8 text-gold" />
+            <AryaLogo size="md" animate className="text-gold" />
             <div>
               <h1 className="font-royal text-xl text-gold">AJBU Kingdom</h1>
               <p className="text-sm text-muted-foreground font-imperial">
@@ -167,7 +168,7 @@ const Dashboard = () => {
             {/* Stats Panel */}
             <div className="panel-throne p-4 space-y-4">
               <h3 className="font-royal text-lg text-gold flex items-center space-x-2">
-                <Crown className="w-5 h-5" />
+                <AryaLogo size="sm" />
                 <span>Royal Statistics</span>
               </h3>
               
