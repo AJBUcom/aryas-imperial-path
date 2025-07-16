@@ -1,17 +1,18 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Crown, Sun, Swords, Shield } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import throneHallBg from "@/assets/throne-hall-background.jpg";
 
 const Index = () => {
   const [isEntering, setIsEntering] = useState(false);
+  const navigate = useNavigate();
 
   const handleEnterKingdom = () => {
     setIsEntering(true);
-    // Future: Navigate to dashboard
     setTimeout(() => {
-      console.log("Entering the kingdom...");
-    }, 1000);
+      navigate('/dashboard');
+    }, 1500);
   };
 
   return (
