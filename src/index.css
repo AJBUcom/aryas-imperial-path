@@ -51,6 +51,20 @@ All colors MUST be HSL.
 
     --radius: 0.75rem;
 
+    /* Calendar Dark Mode Colors */
+    --calendar-bg: 220 13% 18%;
+    --calendar-header: 220 13% 22%;
+    --calendar-border: 220 13% 28%;
+    --calendar-cell: 220 13% 20%;
+    --calendar-cell-hover: 220 13% 25%;
+    --calendar-time: 220 9% 46%;
+    --calendar-today: 210 40% 98%;
+
+    /* Quest Colors */
+    --quest-main: 45 95% 55%;      /* Gold for main quests */
+    --quest-side: 220 9% 46%;      /* Silver for side quests */
+    --quest-ritual: 270 80% 50%;   /* Violet for rituals */
+
     /* Imperial Gradients */
     --gradient-throne: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--primary-glow)) 50%, hsl(var(--gold)) 100%);
     --gradient-gold: linear-gradient(135deg, hsl(var(--gold-dark)) 0%, hsl(var(--gold)) 50%, hsl(var(--gold-light)) 100%);
@@ -67,19 +81,12 @@ All colors MUST be HSL.
     --transition-divine: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
 
     --sidebar-background: 0 0% 98%;
-
     --sidebar-foreground: 240 5.3% 26.1%;
-
     --sidebar-primary: 240 5.9% 10%;
-
     --sidebar-primary-foreground: 0 0% 98%;
-
     --sidebar-accent: 240 4.8% 95.9%;
-
     --sidebar-accent-foreground: 240 5.9% 10%;
-
     --sidebar-border: 220 13% 91%;
-
     --sidebar-ring: 217.2 91.2% 59.8%;
   }
 
@@ -191,6 +198,99 @@ All colors MUST be HSL.
     @apply shadow-[0_0_25px_hsl(var(--gold)/0.2)];
   }
 
+  /* Calendar Components */
+  .calendar-grid {
+    @apply bg-[hsl(var(--calendar-bg))] border border-[hsl(var(--calendar-border))];
+    @apply rounded-lg overflow-hidden;
+  }
+
+  .calendar-header {
+    @apply bg-[hsl(var(--calendar-header))] border-b border-[hsl(var(--calendar-border))];
+    @apply px-4 py-3 font-imperial text-sm text-[hsl(var(--calendar-time))];
+  }
+
+  .calendar-time-column {
+    @apply border-r border-[hsl(var(--calendar-border))] min-w-[60px];
+  }
+
+  .calendar-time-slot {
+    @apply h-16 border-b border-[hsl(var(--calendar-border))] px-2 py-1;
+    @apply text-xs text-[hsl(var(--calendar-time))] font-imperial;
+  }
+
+  .calendar-event-area {
+    @apply flex-1 relative;
+  }
+
+  .calendar-hour-row {
+    @apply h-16 border-b border-[hsl(var(--calendar-border))] relative;
+    @apply hover:bg-[hsl(var(--calendar-cell-hover))] transition-colors duration-150;
+  }
+
+  .quest-block {
+    @apply absolute left-1 right-1 rounded-md px-3 py-1;
+    @apply text-xs font-imperial font-medium;
+    @apply cursor-pointer transition-all duration-200;
+    @apply hover:scale-105 hover:z-10;
+  }
+
+  .quest-main {
+    @apply bg-gradient-to-r from-[hsl(var(--quest-main))] to-[hsl(var(--quest-main))/0.8];
+    @apply text-[hsl(var(--secondary-foreground))] shadow-[0_2px_8px_hsl(var(--quest-main)/0.3)];
+  }
+
+  .quest-side {
+    @apply bg-gradient-to-r from-[hsl(var(--quest-side))] to-[hsl(var(--quest-side))/0.8];
+    @apply text-white shadow-[0_2px_8px_hsl(var(--quest-side)/0.3)];
+  }
+
+  .quest-ritual {
+    @apply bg-gradient-to-r from-[hsl(var(--quest-ritual))] to-[hsl(var(--quest-ritual))/0.8];
+    @apply text-white shadow-[0_2px_8px_hsl(var(--quest-ritual)/0.3)];
+  }
+
+  /* Pixel Elements */
+  .pixel-character {
+    @apply w-8 h-8 bg-gradient-to-b from-[hsl(var(--gold))] to-[hsl(var(--gold-dark))];
+    @apply rounded-sm border border-[hsl(var(--gold-light))];
+    @apply transition-transform duration-1000 ease-in-out;
+  }
+
+  .pixel-icon {
+    @apply w-4 h-4 bg-gradient-to-br from-[hsl(var(--gold))] to-[hsl(var(--gold-dark))];
+    @apply rounded-sm animate-float;
+  }
+
+  .pixel-scroll {
+    @apply bg-gradient-to-b from-amber-200 to-amber-600;
+    @apply border border-amber-400 rounded-sm px-3 py-2;
+    @apply shadow-[0_4px_12px_rgba(245,158,11,0.4)];
+    @apply animate-float;
+  }
+
+  .throne-meter {
+    @apply bg-gradient-to-r from-[hsl(var(--stone-dark))] to-[hsl(var(--stone))];
+    @apply border border-[hsl(var(--gold))/30] rounded-full h-4;
+    @apply overflow-hidden relative;
+  }
+
+  .throne-progress {
+    @apply bg-gradient-to-r from-[hsl(var(--gold))] to-[hsl(var(--gold-light))];
+    @apply h-full transition-all duration-1000 ease-out;
+    @apply shadow-[0_0_15px_hsl(var(--gold)/0.6)];
+  }
+
+  .throne-icon {
+    @apply absolute right-0 top-1/2 transform -translate-y-1/2;
+    @apply w-6 h-6 text-[hsl(var(--gold))] transition-all duration-500;
+  }
+
+  .treasure-chest {
+    @apply w-12 h-10 bg-gradient-to-b from-amber-400 to-amber-600;
+    @apply border border-amber-300 rounded-sm;
+    @apply animate-bounce shadow-[0_4px_15px_rgba(245,158,11,0.5)];
+  }
+
   /* Divine Animations */
   .animate-float {
     animation: float 6s ease-in-out infinite;
@@ -202,6 +302,10 @@ All colors MUST be HSL.
 
   .animate-ember {
     animation: ember 8s linear infinite;
+  }
+
+  .animate-pixel-walk {
+    animation: pixelWalk 3s linear infinite;
   }
 }
 
@@ -253,4 +357,16 @@ All colors MUST be HSL.
   10% { opacity: 1; }
   90% { opacity: 1; }
   100% { transform: translateY(-100px) rotate(360deg); opacity: 0; }
+}
+
+@keyframes pixelWalk {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(calc(100vw - 32px)); }
+}
+
+@keyframes bounce {
+  0%, 20%, 53%, 80%, 100% { transform: translate3d(0, 0, 0); }
+  40%, 43% { transform: translate3d(0, -15px, 0); }
+  70% { transform: translate3d(0, -7px, 0); }
+  90% { transform: translate3d(0, -2px, 0); }
 }

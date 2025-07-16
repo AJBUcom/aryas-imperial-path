@@ -1,266 +1,228 @@
 import { useState, useEffect } from "react";
-import { Crown, Settings, Calendar, User, Menu, X } from "lucide-react";
-import { QuestCard, Quest } from "@/components/QuestCard";
-import { ProgressSun } from "@/components/ProgressSun";
-import { DNARune } from "@/components/DNARune";
-import { AryaCharacter } from "@/components/AryaCharacter";
+import { useAuth } from "@/hooks/useAuth";
+import { Button } from "@/components/ui/button";
+import { Crown, LogOut, Settings, Calendar, Menu, User } from "lucide-react";
+import CalendarView from "@/components/CalendarView";
+import DNARune from "@/components/DNARune";
+import PixelCharacter from "@/components/PixelCharacter";
+import PixelOverlay from "@/components/PixelOverlay";
+import ThroneProgressMeter from "@/components/ThroneProgressMeter";
 import stonePathBg from "@/assets/stone-path-background.jpg";
 
+interface Quest {
+  id: string;
+  title: string;
+  type: 'main' | 'side' | 'ritual';
+  startTime: string;
+  duration: number;
+  completed: boolean;
+}
+
 const Dashboard = () => {
+  const { user, signOut } = useAuth();
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const [quests, setQuests] = useState<Quest[]>([
     {
-      id: '1',
-      title: 'Morning Temple Ritual',
-      description: 'Sacred preparation for the day ahead. Meditation, planning, and warrior mindset activation.',
-      type: 'ritual',
-      duration: 30,
-      timeSlot: '06:00 - 06:30',
-      completed: true
-    },
-    {
-      id: '2',
-      title: 'Conquer the Code Fortress',
-      description: 'Deploy the new authentication system and fortify the kingdom\'s digital walls.',
-      type: 'main',
-      duration: 120,
-      timeSlot: '09:00 - 11:00',
-      completed: true
-    },
-    {
-      id: '3',
-      title: 'Strategic Council Meeting',
-      description: 'Align with fellow warriors on the quarterly conquest plans.',
-      type: 'main',
-      duration: 60,
-      timeSlot: '11:30 - 12:30',
+      id: "1",
+      title: "Morning Kingdom Strategy",
+      type: "main",
+      startTime: "09:00",
+      duration: 2,
       completed: false
     },
     {
-      id: '4',
-      title: 'Midday Checkpoint',
-      description: 'Assess progress, realign focus, and prepare for the afternoon battles.',
-      type: 'ritual',
-      duration: 15,
-      timeSlot: '13:00 - 13:15',
+      id: "2", 
+      title: "Royal Training Session",
+      type: "main",
+      startTime: "14:00",
+      duration: 1,
       completed: false
     },
     {
-      id: '5',
-      title: 'Reply to Royal Correspondence',
-      description: 'Answer the messages from your subjects and maintain diplomatic relations.',
-      type: 'side',
-      duration: 45,
-      timeSlot: '14:00 - 14:45',
+      id: "3",
+      title: "Ancient Text Study",
+      type: "side",
+      startTime: "11:00",
+      duration: 1,
       completed: false
     },
     {
-      id: '6',
-      title: 'Build the Analytics Dashboard',
-      description: 'Create the intelligence gathering system for kingdom insights.',
-      type: 'main',
-      duration: 90,
-      timeSlot: '15:00 - 16:30',
+      id: "4",
+      title: "Meditation Ritual",
+      type: "ritual",
+      startTime: "07:00",
+      duration: 1,
       completed: false
     },
     {
-      id: '7',
-      title: 'Physical Training',
-      description: 'Strengthen the vessel that carries the warrior spirit.',
-      type: 'side',
-      duration: 60,
-      timeSlot: '17:00 - 18:00',
-      completed: false
-    },
-    {
-      id: '8',
-      title: 'Nightfall Reflection',
-      description: 'Review conquests, acknowledge growth, and prepare the mind for rest.',
-      type: 'ritual',
-      duration: 20,
-      timeSlot: '21:00 - 21:20',
+      id: "5",
+      title: "Court Advisory Meeting",
+      type: "side",
+      startTime: "16:00",
+      duration: 2,
       completed: false
     }
   ]);
 
-  const [sidebarOpen, setSidebarOpen] = useState(false);
-
   const completedQuests = quests.filter(q => q.completed).length;
   const totalQuests = quests.length;
-  const progressPercentage = (completedQuests / totalQuests) * 100;
+  const progressPercentage = totalQuests > 0 ? (completedQuests / totalQuests) * 100 : 0;
+  const isProductiveDay = completedQuests >= 3;
 
-  const handleCompleteQuest = (questId: string) => {
+  const handleQuestClick = (questId: string) => {
     setQuests(prev => prev.map(quest => 
-      quest.id === questId ? { ...quest, completed: true } : quest
+      quest.id === questId 
+        ? { ...quest, completed: !quest.completed }
+        : quest
     ));
   };
 
-  const handleStartQuest = (questId: string) => {
-    console.log('Starting quest:', questId);
-    // Future: Navigate to quest view
+  const handleSignOut = async () => {
+    await signOut();
   };
 
   return (
-    <div className="min-h-screen relative overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5 relative overflow-hidden">
       {/* Background */}
       <div 
-        className="absolute inset-0 bg-cover bg-center"
-        style={{ backgroundImage: `url(${stonePathBg})` }}
-      >
-        <div className="absolute inset-0 bg-gradient-to-b from-background/50 via-background/70 to-background/90" />
-        <div className="absolute inset-0 bg-gradient-to-r from-primary/10 via-transparent to-gold/10" />
-      </div>
+        className="fixed inset-0 opacity-10 bg-cover bg-center"
+        style={{ 
+          backgroundImage: `url(${stonePathBg})`,
+          filter: 'blur(2px) grayscale(40%)'
+        }}
+      />
+      
+      {/* DNA Rune */}
+      <DNARune />
+      
+      {/* Pixel Overlay */}
+      <PixelOverlay questsCompleted={completedQuests} isProductiveDay={isProductiveDay} />
 
-      {/* Main Layout */}
-      <div className="relative z-10 min-h-screen">
-        {/* Header */}
-        <header className="border-b border-border/30 bg-card/20 backdrop-blur-sm">
-          <div className="max-w-7xl mx-auto px-6 py-4">
-            <div className="flex items-center justify-between">
-              {/* Logo & User */}
-              <div className="flex items-center space-x-6">
-                <div className="flex items-center space-x-3">
-                  <Crown className="w-8 h-8 text-gold" />
-                  <span className="font-royal text-2xl text-gold text-shadow-gold">AJBU</span>
-                </div>
-                <div className="hidden md:flex items-center space-x-2 text-muted-foreground">
-                  <User className="w-5 h-5" />
-                  <span className="font-imperial">King Arya</span>
-                </div>
-              </div>
-
-              {/* Progress & Actions */}
-              <div className="flex items-center space-x-6">
-                <div className="hidden lg:block">
-                  <ProgressSun completed={completedQuests} total={totalQuests} />
-                </div>
-                
-                <div className="flex items-center space-x-3">
-                  <button className="p-2 text-muted-foreground hover:text-gold transition-colors">
-                    <Calendar className="w-5 h-5" />
-                  </button>
-                  <button className="p-2 text-muted-foreground hover:text-gold transition-colors">
-                    <Settings className="w-5 h-5" />
-                  </button>
-                  <button 
-                    onClick={() => setSidebarOpen(!sidebarOpen)}
-                    className="lg:hidden p-2 text-muted-foreground hover:text-gold transition-colors"
-                  >
-                    {sidebarOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-                  </button>
-                </div>
-              </div>
+      {/* Header */}
+      <header className="relative z-20 bg-card/80 backdrop-blur-sm border-b border-border/50">
+        <div className="flex items-center justify-between p-4">
+          <div className="flex items-center space-x-4">
+            <Crown className="w-8 h-8 text-gold" />
+            <div>
+              <h1 className="font-royal text-xl text-gold">AJBU Kingdom</h1>
+              <p className="text-sm text-muted-foreground font-imperial">
+                Welcome back, {user?.email?.split('@')[0] || 'Your Majesty'}
+              </p>
             </div>
           </div>
-        </header>
+          
+          <div className="flex items-center space-x-3">
+            <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-gold">
+              <Calendar className="w-5 h-5" />
+            </Button>
+            <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-gold">
+              <Settings className="w-5 h-5" />
+            </Button>
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              className="text-muted-foreground hover:text-destructive"
+              onClick={handleSignOut}
+            >
+              <LogOut className="w-5 h-5" />
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="md:hidden text-muted-foreground hover:text-gold"
+              onClick={() => setSidebarOpen(!sidebarOpen)}
+            >
+              <Menu className="w-5 h-5" />
+            </Button>
+          </div>
+        </div>
+      </header>
 
+      <div className="flex relative z-10">
         {/* Main Content */}
-        <main className="max-w-7xl mx-auto px-6 py-8">
-          <div className="grid lg:grid-cols-3 gap-8">
-            {/* Quest Timeline */}
-            <div className="lg:col-span-2 space-y-6">
-              {/* DNA Rune */}
-              <DNARune />
+        <main className="flex-1 p-6 max-w-5xl mx-auto">
+          {/* Pixel Character */}
+          <div className="mb-8">
+            <PixelCharacter questsCompleted={completedQuests} totalQuests={totalQuests} />
+          </div>
 
-              {/* Character Progress */}
-              <AryaCharacter 
-                progress={progressPercentage}
-                totalQuests={totalQuests}
-                completedQuests={completedQuests}
-              />
+          {/* Calendar */}
+          <div className="mb-8">
+            <CalendarView quests={quests} onQuestClick={handleQuestClick} />
+          </div>
 
-              {/* Today's Quests Header */}
-              <div className="text-center mb-8">
-                <h1 className="font-royal text-3xl md:text-4xl text-gold text-shadow-gold mb-2">
-                  Today's Sacred Questline
-                </h1>
-                <p className="font-imperial text-muted-foreground">
-                  {new Date().toLocaleDateString('en-US', { 
-                    weekday: 'long', 
-                    year: 'numeric', 
-                    month: 'long', 
-                    day: 'numeric' 
-                  })}
-                </p>
-              </div>
-
-              {/* Quest Cards */}
-              <div className="space-y-4">
-                {quests.map((quest) => (
-                  <QuestCard
-                    key={quest.id}
-                    quest={quest}
-                    onComplete={handleCompleteQuest}
-                    onStart={handleStartQuest}
-                  />
-                ))}
-              </div>
-
-              {/* Motivational Footer */}
-              <div className="text-center py-8">
-                <div className="panel-throne rounded-lg p-6 max-w-md mx-auto">
-                  <p className="font-imperial text-lg text-gold italic">
-                    "Every quest completed is a step closer to the throne."
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            {/* Sidebar - Progress & Stats */}
-            <div className={`lg:block ${sidebarOpen ? 'block' : 'hidden'} space-y-6`}>
-              {/* Mobile Progress */}
-              <div className="lg:hidden">
-                <ProgressSun completed={completedQuests} total={totalQuests} />
-              </div>
-
-              {/* Daily Stats */}
-              <div className="panel-throne rounded-xl p-6">
-                <h3 className="font-royal text-xl text-gold mb-4 text-center">
-                  Royal Statistics
-                </h3>
-                
-                <div className="space-y-4">
-                  <div className="flex justify-between items-center py-2 border-b border-border/30">
-                    <span className="font-imperial text-sm text-muted-foreground">Total Quests</span>
-                    <span className="font-royal text-gold">{totalQuests}</span>
-                  </div>
-                  <div className="flex justify-between items-center py-2 border-b border-border/30">
-                    <span className="font-imperial text-sm text-muted-foreground">Completed</span>
-                    <span className="font-royal text-gold">{completedQuests}</span>
-                  </div>
-                  <div className="flex justify-between items-center py-2 border-b border-border/30">
-                    <span className="font-imperial text-sm text-muted-foreground">Remaining</span>
-                    <span className="font-royal text-primary-glow">{totalQuests - completedQuests}</span>
-                  </div>
-                  <div className="flex justify-between items-center py-2">
-                    <span className="font-imperial text-sm text-muted-foreground">Progress</span>
-                    <span className="font-royal text-gold">{Math.round(progressPercentage)}%</span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Throne Meter */}
-              <div className="panel-throne rounded-xl p-6 text-center">
-                <h3 className="font-royal text-lg text-gold mb-4">
-                  Throne Meter
-                </h3>
-                <div className="space-y-3">
-                  <div className="w-full bg-stone-dark rounded-full h-3">
-                    <div 
-                      className="bg-gradient-to-r from-gold to-gold-light h-3 rounded-full transition-all duration-1000 shadow-[0_0_10px_hsl(var(--gold)/0.5)]"
-                      style={{ width: `${progressPercentage}%` }}
-                    />
-                  </div>
-                  <p className="font-imperial text-sm text-muted-foreground">
-                    {progressPercentage < 50 ? 'Peasant' : 
-                     progressPercentage < 80 ? 'Knight' : 
-                     progressPercentage < 100 ? 'Lord' : 'King'}
-                  </p>
-                </div>
-              </div>
-            </div>
+          {/* Throne Progress Meter */}
+          <div className="max-w-md mx-auto">
+            <ThroneProgressMeter progress={progressPercentage} label="Daily Kingdom Progress" />
           </div>
         </main>
+
+        {/* Sidebar */}
+        <aside className={`
+          fixed md:relative top-0 right-0 h-full w-80 bg-card/90 backdrop-blur-sm border-l border-border/50 
+          transform transition-transform duration-300 z-30
+          ${sidebarOpen ? 'translate-x-0' : 'translate-x-full md:translate-x-0'}
+        `}>
+          <div className="p-6 space-y-6">
+            {/* Stats Panel */}
+            <div className="panel-throne p-4 space-y-4">
+              <h3 className="font-royal text-lg text-gold flex items-center space-x-2">
+                <Crown className="w-5 h-5" />
+                <span>Royal Statistics</span>
+              </h3>
+              
+              <div className="grid grid-cols-2 gap-4 text-center">
+                <div className="bg-quest-main/20 rounded-lg p-3">
+                  <div className="font-royal text-2xl text-gold">{totalQuests}</div>
+                  <div className="text-xs text-muted-foreground font-imperial">Total Quests</div>
+                </div>
+                <div className="bg-quest-ritual/20 rounded-lg p-3">
+                  <div className="font-royal text-2xl text-primary-glow">{completedQuests}</div>
+                  <div className="text-xs text-muted-foreground font-imperial">Completed</div>
+                </div>
+                <div className="bg-quest-side/20 rounded-lg p-3">
+                  <div className="font-royal text-2xl text-gold-light">{totalQuests - completedQuests}</div>
+                  <div className="text-xs text-muted-foreground font-imperial">Remaining</div>
+                </div>
+                <div className="bg-gradient-to-br from-gold/20 to-primary/20 rounded-lg p-3">
+                  <div className="font-royal text-2xl text-gold">{Math.round(progressPercentage)}%</div>
+                  <div className="text-xs text-muted-foreground font-imperial">Progress</div>
+                </div>
+              </div>
+            </div>
+
+            {/* Progress Meters */}
+            <div className="space-y-4">
+              <ThroneProgressMeter progress={progressPercentage} label="Daily Progress" />
+              <ThroneProgressMeter progress={65} label="Weekly Streak" />
+              <ThroneProgressMeter progress={80} label="Monthly Goals" />
+            </div>
+
+            {/* User Info */}
+            <div className="panel-quest p-4">
+              <div className="flex items-center space-x-3">
+                <div className="w-12 h-12 bg-gradient-to-br from-gold to-primary rounded-full flex items-center justify-center">
+                  <User className="w-6 h-6 text-primary-foreground" />
+                </div>
+                <div>
+                  <div className="font-royal text-gold">Royal Profile</div>
+                  <div className="text-sm text-muted-foreground font-imperial">
+                    {user?.email}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </aside>
       </div>
+
+      {/* Sidebar Overlay for Mobile */}
+      {sidebarOpen && (
+        <div 
+          className="fixed inset-0 bg-black/50 z-20 md:hidden"
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
     </div>
   );
 };
