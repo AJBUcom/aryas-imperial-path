@@ -215,7 +215,7 @@ All colors MUST be HSL.
   }
 
   .gcal-time-slot {
-    @apply h-16 border-b border-[hsl(var(--gcal-line))] px-3 py-1 flex items-start justify-end;
+    @apply h-10 border-b border-[hsl(var(--gcal-line))] px-3 py-1 flex items-start justify-end;
     @apply text-xs text-[hsl(var(--gcal-time))] font-medium;
   }
 
@@ -224,7 +224,7 @@ All colors MUST be HSL.
   }
 
   .gcal-hour-row {
-    @apply h-16 border-b border-[hsl(var(--gcal-line))] relative;
+    @apply h-10 border-b border-[hsl(var(--gcal-line))] relative;
     @apply hover:bg-[hsl(var(--gcal-cell-hover))] transition-colors duration-150 cursor-pointer;
   }
 

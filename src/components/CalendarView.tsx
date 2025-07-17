@@ -17,16 +17,16 @@ const CalendarView = ({ quests, onQuestClick, onCreateQuest }: CalendarViewProps
   const calendarRef = useRef<HTMLDivElement>(null);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
-  // Auto-scroll to current time on mount
-  useEffect(() => {
-    const now = new Date();
-    const currentHour = now.getHours();
-    const scrollPosition = Math.max(0, (currentHour - 2) * 64); // 64px per hour, show 2 hours before
-    
-    if (scrollContainerRef.current) {
-      scrollContainerRef.current.scrollTop = scrollPosition;
-    }
-  }, []);
+  // Remove auto-scroll since we want to see all hours
+  // useEffect(() => {
+  //   const now = new Date();
+  //   const currentHour = now.getHours();
+  //   const scrollPosition = Math.max(0, (currentHour - 2) * 64);
+  //   
+  //   if (scrollContainerRef.current) {
+  //     scrollContainerRef.current.scrollTop = scrollPosition;
+  //   }
+  // }, []);
 
   const formatTime = (hour: number) => {
     if (hour === 0) return '';
@@ -93,22 +93,22 @@ const CalendarView = ({ quests, onQuestClick, onCreateQuest }: CalendarViewProps
     const endHour = endDate.getHours();
     const endMinutes = endDate.getMinutes();
     
-    // Calculate position within the hour (64px per hour)
+    // Calculate position within the hour (40px per hour for compact view)
     let top = 0;
-    let height = 64;
+    let height = 40;
     
     if (hour === startHour) {
-      top = (startMinutes / 60) * 64;
+      top = (startMinutes / 60) * 40;
       if (hour === endHour) {
-        height = ((endMinutes - startMinutes) / 60) * 64;
+        height = ((endMinutes - startMinutes) / 60) * 40;
       } else {
-        height = 64 - top;
+        height = 40 - top;
       }
     } else if (hour === endHour && endMinutes > 0) {
-      height = (endMinutes / 60) * 64;
+      height = (endMinutes / 60) * 40;
     }
     
-    return { top, height: Math.max(height, 20) }; // Minimum 20px height
+    return { top, height: Math.max(height, 16) }; // Minimum 16px height
   };
 
   const handleMouseDown = (hour: number, e: React.MouseEvent) => {
@@ -130,8 +130,8 @@ const CalendarView = ({ quests, onQuestClick, onCreateQuest }: CalendarViewProps
       // Calculate which hour we're over based on mouse position
       const rect = calendarRef.current?.getBoundingClientRect();
       if (rect) {
-        const relativeY = e.clientY - rect.top + (scrollContainerRef.current?.scrollTop || 0);
-        const hour = Math.floor(relativeY / 64);
+        const relativeY = e.clientY - rect.top;
+        const hour = Math.floor(relativeY / 40); // 40px per hour
         if (hour >= 0 && hour < 24) {
           setDragEnd(hour);
         }
@@ -177,21 +177,20 @@ const CalendarView = ({ quests, onQuestClick, onCreateQuest }: CalendarViewProps
         </div>
       </div>
       
-      {/* Calendar Grid */}
-      <div className="flex h-[600px]">
+      {/* Calendar Grid - Full height, no scrolling */}
+      <div className="flex">
         {/* Time Column */}
         <div className="gcal-time-column">
           {Array.from({ length: 24 }, (_, hour) => (
-            <div key={hour} className="gcal-time-slot">
+            <div key={hour} className="h-10 border-b border-gcal-line px-3 py-1 flex items-start justify-end text-xs text-gcal-time font-medium">
               {formatTime(hour)}
             </div>
           ))}
         </div>
         
-        {/* Event Area */}
+        {/* Event Area - No scrolling */}
         <div 
-          className="gcal-event-area overflow-y-auto"
-          ref={scrollContainerRef}
+          className="gcal-event-area"
           onMouseMove={handleMouseMove}
           onMouseUp={handleMouseUp}
           onMouseLeave={handleMouseUp}
@@ -203,9 +202,10 @@ const CalendarView = ({ quests, onQuestClick, onCreateQuest }: CalendarViewProps
               return (
                 <div 
                   key={hour} 
-                  className={`gcal-hour-row ${
-                    isInDragRange(hour) ? 'gcal-drag-preview' : ''
-                  }`}
+                  className="h-10 border-b border-gcal-line relative hover:bg-gcal-cell-hover transition-colors duration-150 cursor-pointer"
+                  style={{
+                    backgroundColor: isInDragRange(hour) ? 'hsl(var(--quest-main) / 0.1)' : undefined
+                  }}
                   onMouseDown={(e) => handleMouseDown(hour, e)}
                 >
                   {/* Current time indicator */}
@@ -215,7 +215,7 @@ const CalendarView = ({ quests, onQuestClick, onCreateQuest }: CalendarViewProps
                     const currentMinutes = now.getMinutes();
                     
                     if (hour === currentHour) {
-                      const position = (currentMinutes / 60) * 64;
+                      const position = (currentMinutes / 60) * 40; // 40px per hour
                       return (
                         <div 
                           className="absolute left-0 right-0 h-0.5 bg-red-500 z-20"
@@ -239,7 +239,7 @@ const CalendarView = ({ quests, onQuestClick, onCreateQuest }: CalendarViewProps
                     const startHour = new Date(quest.start_time).getHours();
                     const endHour = new Date(quest.end_time).getHours();
                     const duration = endHour - startHour || 1;
-                    const blockHeight = duration * 64;
+                    const blockHeight = duration * 40; // 40px per hour
                     
                     return (
                       <div
