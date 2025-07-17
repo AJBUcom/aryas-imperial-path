@@ -67,6 +67,22 @@ export default {
 					DEFAULT: 'hsl(var(--blood))',
 					dark: 'hsl(var(--blood-dark))'
 				},
+				// Google Calendar Colors
+				gcal: {
+					bg: 'hsl(var(--gcal-bg))',
+					header: 'hsl(var(--gcal-header))',
+					border: 'hsl(var(--gcal-border))',
+					cell: 'hsl(var(--gcal-cell))',
+					'cell-hover': 'hsl(var(--gcal-cell-hover))',
+					time: 'hsl(var(--gcal-time))',
+					text: 'hsl(var(--gcal-text))',
+					line: 'hsl(var(--gcal-line))'
+				},
+				quest: {
+					main: 'hsl(var(--quest-main))',
+					side: 'hsl(var(--quest-side))',
+					ritual: 'hsl(var(--quest-ritual))'
+				},
 				sidebar: {
 					DEFAULT: 'hsl(var(--sidebar-background))',
 					foreground: 'hsl(var(--sidebar-foreground))',

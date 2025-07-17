@@ -51,18 +51,19 @@ All colors MUST be HSL.
 
     --radius: 0.75rem;
 
-    /* Calendar Dark Mode Colors */
-    --calendar-bg: 220 13% 18%;
-    --calendar-header: 220 13% 22%;
-    --calendar-border: 220 13% 28%;
-    --calendar-cell: 220 13% 20%;
-    --calendar-cell-hover: 220 13% 25%;
-    --calendar-time: 220 9% 46%;
-    --calendar-today: 210 40% 98%;
+    /* Google Calendar Dark Mode Colors */
+    --gcal-bg: 220 13% 11%;        /* #1c1c1e - Main calendar background */
+    --gcal-header: 220 13% 15%;    /* #2d2d30 - Header background */
+    --gcal-border: 220 13% 22%;    /* #393941 - Border lines */
+    --gcal-cell: 220 13% 13%;      /* #202124 - Cell background */
+    --gcal-cell-hover: 220 13% 18%; /* #2d2d30 - Cell hover */
+    --gcal-time: 220 9% 46%;       /* #9aa0a6 - Time text */
+    --gcal-text: 220 13% 85%;      /* #e8eaed - Main text */
+    --gcal-line: 220 13% 18%;      /* #2d2d30 - Grid lines */
 
-    /* Quest Colors */
+    /* Quest Colors - Google Calendar event style */
     --quest-main: 45 95% 55%;      /* Gold for main quests */
-    --quest-side: 220 9% 46%;      /* Silver for side quests */
+    --quest-side: 207 90% 61%;     /* Blue for side quests */
     --quest-ritual: 270 80% 50%;   /* Violet for rituals */
 
     /* Imperial Gradients */
@@ -198,55 +199,64 @@ All colors MUST be HSL.
     @apply shadow-[0_0_25px_hsl(var(--gold)/0.2)];
   }
 
-  /* Calendar Components */
-  .calendar-grid {
-    @apply bg-[hsl(var(--calendar-bg))] border border-[hsl(var(--calendar-border))];
-    @apply rounded-lg overflow-hidden;
+  /* Google Calendar Components */
+  .gcal-container {
+    @apply bg-[hsl(var(--gcal-bg))] border border-[hsl(var(--gcal-border))];
+    @apply rounded-lg overflow-hidden font-sans;
   }
 
-  .calendar-header {
-    @apply bg-[hsl(var(--calendar-header))] border-b border-[hsl(var(--calendar-border))];
-    @apply px-4 py-3 font-imperial text-sm text-[hsl(var(--calendar-time))];
+  .gcal-header {
+    @apply bg-[hsl(var(--gcal-header))] border-b border-[hsl(var(--gcal-border))];
+    @apply px-4 py-3 text-sm text-[hsl(var(--gcal-text))] font-medium;
   }
 
-  .calendar-time-column {
-    @apply border-r border-[hsl(var(--calendar-border))] min-w-[60px];
+  .gcal-time-column {
+    @apply border-r border-[hsl(var(--gcal-line))] min-w-[80px] bg-[hsl(var(--gcal-bg))];
   }
 
-  .calendar-time-slot {
-    @apply h-16 border-b border-[hsl(var(--calendar-border))] px-2 py-1;
-    @apply text-xs text-[hsl(var(--calendar-time))] font-imperial;
+  .gcal-time-slot {
+    @apply h-16 border-b border-[hsl(var(--gcal-line))] px-3 py-1 flex items-start justify-end;
+    @apply text-xs text-[hsl(var(--gcal-time))] font-medium;
   }
 
-  .calendar-event-area {
-    @apply flex-1 relative;
+  .gcal-event-area {
+    @apply flex-1 relative bg-[hsl(var(--gcal-cell))];
   }
 
-  .calendar-hour-row {
-    @apply h-16 border-b border-[hsl(var(--calendar-border))] relative;
-    @apply hover:bg-[hsl(var(--calendar-cell-hover))] transition-colors duration-150;
+  .gcal-hour-row {
+    @apply h-16 border-b border-[hsl(var(--gcal-line))] relative;
+    @apply hover:bg-[hsl(var(--gcal-cell-hover))] transition-colors duration-150 cursor-pointer;
   }
 
-  .quest-block {
-    @apply absolute left-1 right-1 rounded-md px-3 py-1;
-    @apply text-xs font-imperial font-medium;
-    @apply cursor-pointer transition-all duration-200;
-    @apply hover:scale-105 hover:z-10;
+  .gcal-quest-block {
+    @apply absolute left-1 right-1 rounded-md px-3 py-2 min-h-[32px];
+    @apply text-xs font-medium text-white cursor-pointer;
+    @apply transition-all duration-200 hover:scale-[1.02] hover:z-10;
+    @apply border-l-4 shadow-sm flex items-center justify-between;
   }
 
-  .quest-main {
-    @apply bg-gradient-to-r from-[hsl(var(--quest-main))] to-[hsl(var(--quest-main))/0.8];
+  .gcal-quest-main {
+    @apply bg-[hsl(var(--quest-main))/0.9] border-l-[hsl(var(--quest-main))];
     @apply text-[hsl(var(--secondary-foreground))] shadow-[0_2px_8px_hsl(var(--quest-main)/0.3)];
   }
 
-  .quest-side {
-    @apply bg-gradient-to-r from-[hsl(var(--quest-side))] to-[hsl(var(--quest-side))/0.8];
+  .gcal-quest-side {
+    @apply bg-[hsl(var(--quest-side))/0.9] border-l-[hsl(var(--quest-side))];
     @apply text-white shadow-[0_2px_8px_hsl(var(--quest-side)/0.3)];
   }
 
-  .quest-ritual {
-    @apply bg-gradient-to-r from-[hsl(var(--quest-ritual))] to-[hsl(var(--quest-ritual))/0.8];
+  .gcal-quest-ritual {
+    @apply bg-[hsl(var(--quest-ritual))/0.9] border-l-[hsl(var(--quest-ritual))];
     @apply text-white shadow-[0_2px_8px_hsl(var(--quest-ritual)/0.3)];
+  }
+
+  .gcal-quest-completed {
+    @apply opacity-60 line-through;
+  }
+
+  .gcal-drag-preview {
+    @apply border-2 border-dashed border-[hsl(var(--quest-main))/0.5];
+    @apply bg-[hsl(var(--quest-main))/0.1] rounded-md;
   }
 
   /* Pixel Elements */
