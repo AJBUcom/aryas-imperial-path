@@ -81,7 +81,14 @@ export default {
 				quest: {
 					main: 'hsl(var(--quest-main))',
 					side: 'hsl(var(--quest-side))',
-					ritual: 'hsl(var(--quest-ritual))'
+					ritual: 'hsl(var(--quest-ritual))',
+					completed: 'hsl(var(--quest-completed))',
+					overdue: 'hsl(var(--quest-overdue))'
+				},
+				// Time tracking
+				time: {
+					line: 'hsl(var(--time-line))',
+					indicator: 'hsl(var(--time-indicator))'
 				},
 				sidebar: {
 					DEFAULT: 'hsl(var(--sidebar-background))',

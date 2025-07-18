@@ -11,6 +11,8 @@ export interface Quest {
   completed: boolean;
   icon: string;
   xp: number;
+  overdue?: boolean;
+  archived_at?: string;
 }
 
 // Mock data for now - will be replaced with Supabase once migration is approved
@@ -122,6 +124,27 @@ export const useQuests = () => {
     }
   };
 
+  const updateQuest = async (questId: string, updates: Partial<Quest>) => {
+    try {
+      setQuests(prev => prev.map(quest => 
+        quest.id === questId 
+          ? { ...quest, ...updates }
+          : quest
+      ));
+      toast({
+        title: "Quest Updated",
+        description: "Quest has been updated successfully",
+      });
+    } catch (error) {
+      console.error('Error updating quest:', error);
+      toast({
+        title: "Error",
+        description: "Failed to update quest",
+        variant: "destructive",
+      });
+    }
+  };
+
   const deleteQuest = async (questId: string) => {
     try {
       setQuests(prev => prev.filter(quest => quest.id !== questId));
@@ -151,6 +174,7 @@ export const useQuests = () => {
     quests,
     loading,
     createQuest,
+    updateQuest,
     toggleQuestCompletion,
     deleteQuest,
     refetch: fetchQuests,

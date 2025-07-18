@@ -1,17 +1,31 @@
 import { useState, useRef, useEffect } from "react";
-import { Clock, Sword, Scroll, Crown, Zap, Shield, Sparkles, Plus, Check } from "lucide-react";
+import { Clock, Sword, Scroll, Crown, Zap, Shield, Sparkles, Plus, Check, Edit3, AlertTriangle, Trophy } from "lucide-react";
 import { Quest } from "@/hooks/useQuests";
+import { useTimeTracking } from "@/hooks/useTimeTracking";
+import { QuestEditModal } from "./QuestEditModal";
 
 interface CalendarViewProps {
   quests: Quest[];
   onQuestClick: (questId: string) => void;
   onCreateQuest: (startTime: string, endTime: string) => void;
+  onUpdateQuest: (questId: string, updates: Partial<Quest>) => void;
+  onDeleteQuest: (questId: string) => void;
 }
 
-const CalendarView = ({ quests, onQuestClick, onCreateQuest }: CalendarViewProps) => {
+const CalendarView = ({ quests, onQuestClick, onCreateQuest, onUpdateQuest, onDeleteQuest }: CalendarViewProps) => {
   const [isDragging, setIsDragging] = useState(false);
   const [dragStart, setDragStart] = useState<number | null>(null);
   const [dragEnd, setDragEnd] = useState<number | null>(null);
+  const [editingQuest, setEditingQuest] = useState<Quest | null>(null);
+  const [editModalOpen, setEditModalOpen] = useState(false);
+
+  const { 
+    currentTime,
+    formattedCurrentTime,
+    isToday,
+    getCurrentTimePosition,
+    isQuestOverdue 
+  } = useTimeTracking(quests);
   const [dragStartY, setDragStartY] = useState<number | null>(null);
   const [dragCurrentY, setDragCurrentY] = useState<number | null>(null);
   const calendarRef = useRef<HTMLDivElement>(null);
@@ -293,6 +307,19 @@ const CalendarView = ({ quests, onQuestClick, onCreateQuest }: CalendarViewProps
           </div>
         </div>
       </div>
+
+      {/* Quest Edit Modal */}
+      <QuestEditModal
+        open={editModalOpen}
+        onClose={() => {
+          setEditModalOpen(false);
+          setEditingQuest(null);
+        }}
+        quest={editingQuest}
+        onUpdateQuest={onUpdateQuest}
+        onDeleteQuest={onDeleteQuest}
+        onToggleCompletion={onQuestClick}
+      />
     </div>
   );
 };

@@ -65,6 +65,12 @@ All colors MUST be HSL.
     --quest-main: 45 95% 55%;      /* Gold for main quests */
     --quest-side: 207 90% 61%;     /* Blue for side quests */
     --quest-ritual: 270 80% 50%;   /* Violet for rituals */
+    --quest-completed: 142 71% 45%;
+    --quest-overdue: 0 84% 60%;
+
+    /* Time Tracking */
+    --time-line: 0 84% 60%;
+    --time-indicator: 0 84% 60%;
 
     /* Imperial Gradients */
     --gradient-throne: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--primary-glow)) 50%, hsl(var(--gold)) 100%);
@@ -379,4 +385,46 @@ All colors MUST be HSL.
   40%, 43% { transform: translate3d(0, -15px, 0); }
   70% { transform: translate3d(0, -7px, 0); }
   90% { transform: translate3d(0, -2px, 0); }
+}
+
+/* Quest Status Animations */
+.quest-overdue {
+  animation: shake 0.82s cubic-bezier(.36,.07,.19,.97) infinite;
+}
+
+.quest-completed {
+  box-shadow: 0 0 20px hsl(var(--quest-completed) / 0.3);
+}
+
+.time-line {
+  background: linear-gradient(90deg, transparent 0%, hsl(var(--time-line)) 50%, transparent 100%);
+  position: relative;
+}
+
+.time-line::before {
+  content: '';
+  position: absolute;
+  left: -6px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 12px;
+  height: 12px;
+  background: hsl(var(--time-indicator));
+  border-radius: 50%;
+  box-shadow: 0 0 10px hsl(var(--time-indicator) / 0.5);
+}
+
+@keyframes shake {
+  10%, 90% {
+    transform: translate3d(-1px, 0, 0);
+  }
+  20%, 80% {
+    transform: translate3d(2px, 0, 0);
+  }
+  30%, 50%, 70% {
+    transform: translate3d(-4px, 0, 0);
+  }
+  40%, 60% {
+    transform: translate3d(4px, 0, 0);
+  }
 }

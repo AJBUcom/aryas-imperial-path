@@ -18,7 +18,9 @@ const Dashboard = () => {
     quests, 
     loading, 
     createQuest, 
+    updateQuest,
     toggleQuestCompletion, 
+    deleteQuest,
     completedQuests, 
     totalQuests, 
     progressPercentage 
@@ -109,10 +111,12 @@ const Dashboard = () => {
 
           {/* Calendar */}
           <div className="mb-8">
-            <CalendarView 
-              quests={quests} 
+            <CalendarView
+              quests={quests}
               onQuestClick={handleQuestClick}
               onCreateQuest={handleCreateQuest}
+              onUpdateQuest={updateQuest}
+              onDeleteQuest={deleteQuest}
             />
           </div>
 
