@@ -243,7 +243,7 @@ All colors MUST be HSL.
 
   .gcal-quest-main {
     @apply bg-[hsl(var(--quest-main))/0.9] border-l-[hsl(var(--quest-main))];
-    @apply text-[hsl(var(--secondary-foreground))] shadow-[0_2px_8px_hsl(var(--quest-main)/0.3)];
+    @apply text-white shadow-[0_2px_8px_hsl(var(--quest-main)/0.3)];
   }
 
   .gcal-quest-side {
